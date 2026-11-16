@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Read Aloud</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>Read Aloud</h1>
+        <span id="serverDot" class="dot dot-unknown" title="Checking server…"></span>
+      </header>
+
+      <div id="serverMsg" class="server-msg">Checking Kokoro server…</div>
+
+      <div class="row">
+        <label for="voice">Voice</label>
+        <select id="voice"></select>
+      </div>
+
+      <div class="row">
+        <label for="speed">Speed</label>
+        <div class="slider-row">
+          <input id="speed" type="range" min="0.5" max="2" step="0.05" />
+          <span id="speedVal" class="val">1.00×</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="volume">Volume</label>
+        <div class="slider-row">
+          <input id="volume" type="range" min="0" max="1" step="0.05" />
+          <span id="volumeVal" class="val">100%</span>
+        </div>
+      </div>
+
+      <div class="row row-check">
+        <label for="autoScroll">Auto-scroll to the spoken sentence</label>
+        <input id="autoScroll" type="checkbox" />
+      </div>
+
+      <div class="row row-check">
+        <label for="skipNav">Skip nav, headers and footers</label>
+        <input id="skipNav" type="checkbox" />
+      </div>
+
+      <div class="row">
+        <label for="theme">Toolbar theme</label>
+        <select id="theme">
+          <option value="auto">Auto (match system)</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
+
+      <div class="actions">
+        <button id="startBtn" class="primary">Read this page</button>
+        <button id="stopBtn">Stop</button>
+      </div>
+
+      <div class="actions">
+        <button id="rescanBtn">⟳ Rescan for text</button>
+        <button id="testBtn">Test voice</button>
+      </div>
+
+      <div class="actions">
+        <button id="helpBtn">Setup help</button>
+      </div>
+
+      <div id="help" class="help hidden">
+        <p><strong>Kokoro server must be running.</strong> In a terminal:</p>
+        <pre id="cmd">cd ~/kokoro-tts &amp;&amp; ./run-server.sh</pre>
+        <button id="copyBtn" class="mini">Copy command</button>
+        <p class="hint">
+          Then click <em>Read this page</em>. Sentence 1 is highlighted straight away;
+          click any sentence on the page to start from there.
+        </p>
+      </div>
+
+      <footer>
+        <div><span class="kbd">Alt+Shift+R</span> play / pause · <span class="kbd">Alt+Shift+X</span> stop</div>
+        <div><span class="kbd">Alt+↓</span> next section · <span class="kbd">Alt+↑</span> previous section</div>
+        <div><span class="kbd">Alt+Shift+S</span> rescan page for new text</div>
+      </footer>
+    </div>
+    <script src="popup.js"></script>
+  </body>
+</html>

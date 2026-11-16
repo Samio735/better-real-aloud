@@ -1,0 +1,64 @@
+{
+  "manifest_version": 3,
+  "name": "Read Aloud (Kokoro)",
+  "version": "1.0.0",
+  "description": "Reads page text aloud using your local Kokoro MLX server, with sentence highlighting, auto-scroll, click-to-start, pause and restart.",
+  "minimum_chrome_version": "116",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "offscreen"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1:8000/*",
+    "http://localhost:8000/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Read Aloud (Kokoro)",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "commands": {
+    "toggle-read": {
+      "suggested_key": {
+        "default": "Alt+Shift+R",
+        "mac": "Alt+Shift+R"
+      },
+      "description": "Start / pause / resume reading"
+    },
+    "section-next": {
+      "suggested_key": {
+        "default": "Alt+Shift+Down",
+        "mac": "Alt+Shift+Down"
+      },
+      "description": "Skip to the next section"
+    },
+    "section-prev": {
+      "suggested_key": {
+        "default": "Alt+Shift+Up",
+        "mac": "Alt+Shift+Up"
+      },
+      "description": "Skip to the previous section"
+    },
+    "rescan-read": {
+      "suggested_key": {
+        "default": "Alt+Shift+S",
+        "mac": "Alt+Shift+S"
+      },
+      "description": "Rescan the page for new text"
+    }
+  }
+}

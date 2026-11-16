@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Read Aloud — audio player</title>
+  </head>
+  <body>
+    <!--
+      Offscreen document.
+
+      Manifest V3 service workers have no DOM and cannot play audio, and many
+      pages have CSP rules that would break playback inside a content script.
+      This hidden document exists purely to own an <audio> element and a Web
+      Audio gain node.
+
+      Only chrome.runtime is available here — no tabs, no storage.
+    -->
+    <script src="offscreen.js"></script>
+  </body>
+</html>

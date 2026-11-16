@@ -1,0 +1,11 @@
+# Build artifacts
+*.zip
+*.crx
+*.pem
+
+# Local test harness
+test-probe.js
+node_modules/
+
+# macOS
+.DS_Store

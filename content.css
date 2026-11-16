@@ -1,0 +1,234 @@
+/* Read Aloud — on-page styles.
+ *
+ * ::highlight() accepts only a small set of colour-ish properties (no padding,
+ * border, or box-shadow), so the active sentence is styled with a background
+ * plus an EXPLICIT text colour — without the explicit colour, a dark-mode page
+ * renders white text on the highlight, which is unreadable exactly when the
+ * user is looking at it.
+ */
+
+::highlight(ra-current) {
+  background-color: #ffd54a;
+  color: #1a1a1a;
+  text-shadow: none;
+}
+
+::highlight(ra-visited) {
+  background-color: rgba(255, 213, 74, 0.22);
+  color: inherit;
+}
+
+/* Hover affordance: shows the user they can click a sentence to start there. */
+::highlight(ra-hover) {
+  background-color: rgba(120, 170, 255, 0.35);
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(60, 120, 220, 0.8);
+}
+
+/* ---------------------------------------------------------------- overlay UI */
+
+/*
+ * Theme tokens.
+ *
+ * The overlay is always rendered against an unknown page, so it cannot inherit
+ * colours from the host — every value is set explicitly here. Two palettes are
+ * defined and switched by a `data-ra-theme` attribute that the content script
+ * sets, so the CSS never has to guess and the switch is instant.
+ *
+ * `auto` resolves to the OS preference via the media query below, which just
+ * re-declares the same variables.
+ */
+#ra-toolbar,
+#ra-toast {
+  --ra-surface: #1f2430;
+  --ra-surface-border: rgba(255, 255, 255, 0.12);
+  --ra-fg: #f2f4f8;
+  --ra-fg-muted: #aab4c4;
+  --ra-btn-bg: rgba(255, 255, 255, 0.1);
+  --ra-btn-bg-hover: rgba(255, 255, 255, 0.22);
+  --ra-sep: rgba(255, 255, 255, 0.18);
+  --ra-shadow: 0 8px 28px rgba(0, 0, 0, 0.38);
+}
+
+/* Light palette: applied when the user forces light, or when the OS is light
+   and the theme is left on auto. */
+#ra-toolbar[data-ra-theme='light'],
+#ra-toast[data-ra-theme='light'] {
+  --ra-surface: #ffffff;
+  --ra-surface-border: rgba(15, 20, 30, 0.14);
+  --ra-fg: #1b2130;
+  --ra-fg-muted: #5b667a;
+  --ra-btn-bg: rgba(15, 20, 30, 0.06);
+  --ra-btn-bg-hover: rgba(15, 20, 30, 0.13);
+  --ra-sep: rgba(15, 20, 30, 0.14);
+  --ra-shadow: 0 8px 28px rgba(15, 20, 30, 0.18);
+}
+
+#ra-toolbar[data-ra-theme='dark'],
+#ra-toast[data-ra-theme='dark'] {
+  --ra-surface: #1f2430;
+  --ra-surface-border: rgba(255, 255, 255, 0.12);
+  --ra-fg: #f2f4f8;
+  --ra-fg-muted: #aab4c4;
+  --ra-btn-bg: rgba(255, 255, 255, 0.1);
+  --ra-btn-bg-hover: rgba(255, 255, 255, 0.22);
+  --ra-sep: rgba(255, 255, 255, 0.18);
+  --ra-shadow: 0 8px 28px rgba(0, 0, 0, 0.38);
+}
+
+/* auto = follow the OS. Declared after the explicit blocks so it wins for
+   `data-ra-theme="auto"`; the dark/light attribute values still override it
+   because they are more specific selectors, not because of source order. */
+@media (prefers-color-scheme: light) {
+  #ra-toolbar[data-ra-theme='auto'],
+  #ra-toast[data-ra-theme='auto'] {
+    --ra-surface: #ffffff;
+    --ra-surface-border: rgba(15, 20, 30, 0.14);
+    --ra-fg: #1b2130;
+    --ra-fg-muted: #5b667a;
+    --ra-btn-bg: rgba(15, 20, 30, 0.06);
+    --ra-btn-bg-hover: rgba(15, 20, 30, 0.13);
+    --ra-sep: rgba(15, 20, 30, 0.14);
+    --ra-shadow: 0 8px 28px rgba(15, 20, 30, 0.18);
+  }
+}
+
+#ra-toolbar {
+  position: fixed !important;
+  z-index: 2147483647 !important;
+  top: 16px !important;
+  /* Left-anchored, not centred. Centring used left:50% + translateX(-50%), so
+     the bar's width drove its origin: every time the status text changed
+     length ("1/43 · The Quiet…" -> "42/43 · …") the whole bar shifted and the
+     buttons moved under the cursor. Anchoring the left edge keeps every button
+     at a fixed screen position regardless of what the status line says.
+     (The toast below is still centred on purpose — it is transient and has no
+     interactive controls, so nothing moves under the pointer.) */
+  left: 16px !important;
+  transform: none !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 8px 10px !important;
+  margin: 0 !important;
+  border-radius: 12px !important;
+  background: var(--ra-surface) !important;
+  color: var(--ra-fg) !important;
+  font: 13px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  box-shadow: var(--ra-shadow) !important;
+  border: 1px solid var(--ra-surface-border) !important;
+  max-width: min(680px, 94vw) !important;
+  box-sizing: border-box !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+#ra-toolbar * {
+  box-sizing: border-box !important;
+}
+
+#ra-toolbar .ra-btn {
+  all: unset !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  min-width: 34px !important;
+  height: 30px !important;
+  padding: 0 10px !important;
+  border-radius: 8px !important;
+  background: var(--ra-btn-bg) !important;
+  color: var(--ra-fg) !important;
+  font: 600 12px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  white-space: nowrap !important;
+}
+
+#ra-toolbar .ra-btn:hover {
+  background: var(--ra-btn-bg-hover) !important;
+}
+
+#ra-toolbar .ra-btn:active {
+  transform: scale(0.96) !important;
+}
+
+#ra-toolbar .ra-btn[disabled] {
+  opacity: 0.4 !important;
+  cursor: default !important;
+}
+
+/* The play button keeps its amber accent in both themes — it is the primary
+   action, and the dark-on-amber pairing stays legible either way. */
+#ra-toolbar .ra-btn.ra-primary {
+  background: #ffd54a !important;
+  color: #1a1a1a !important;
+}
+
+#ra-toolbar .ra-btn.ra-primary:hover {
+  background: #ffdf74 !important;
+}
+
+#ra-toolbar .ra-sep {
+  width: 1px !important;
+  height: 20px !important;
+  background: var(--ra-sep) !important;
+  margin: 0 2px !important;
+  flex: 0 0 auto !important;
+}
+
+#ra-toolbar .ra-status {
+  font: 500 12px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  color: var(--ra-fg-muted) !important;
+  padding: 0 6px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  /* Fixed width, not max-width + flex-basis:auto. Auto sizing meant a long
+     status ("1/43 · Tides are the ocean's slowest…") widened the bar and
+     pushed the stop button right, while "Paused" pulled it back left — the
+     controls slid around as reading progressed. A fixed box absorbs the
+     varying text (truncated with an ellipsis) so every button stays put. */
+  flex: 0 0 auto !important;
+  width: 170px !important;
+  box-sizing: border-box !important;
+  text-align: left !important;
+}
+
+#ra-toolbar .ra-progress {
+  position: absolute !important;
+  left: 0 !important;
+  bottom: 0 !important;
+  height: 3px !important;
+  background: #ffd54a !important;
+  border-radius: 0 0 12px 12px !important;
+  transition: width 0.25s ease !important;
+  pointer-events: none !important;
+}
+
+/* Hover affordance is the ::highlight(ra-hover) rule at the top of this file —
+   the sentence under the cursor is tinted and underlined. There is deliberately
+   no floating "click to read from here" bubble. */
+
+#ra-toast {
+  position: fixed !important;
+  z-index: 2147483647 !important;
+  bottom: 22px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  padding: 9px 15px !important;
+  border-radius: 9px !important;
+  background: var(--ra-surface) !important;
+  color: var(--ra-fg) !important;
+  font: 500 13px/1.3 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  box-shadow: var(--ra-shadow) !important;
+  border: 1px solid var(--ra-surface-border) !important;
+  pointer-events: none !important;
+}
+
+/* When a page-level click starts reading, we set a crosshair briefly. */
+body.ra-picking #ra-toolbar {
+  outline: 2px solid #2b7fff !important;
+}
